@@ -1,0 +1,53 @@
+name: fluttery
+description: A new Fluttery game.
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.5 <4.0.0'
+  flutter: ^3.13.9
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flame: ^1.10.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  
+  
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
