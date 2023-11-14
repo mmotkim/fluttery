@@ -14,13 +14,17 @@ dependencies:
     sdk: flutter
 
   flame: ^1.10.1
+  flame_tiled: ^1.16.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+    
 flutter:
-
+  assets:
+    - assets/
+    - assets/tiles/
+    - assets/maps/
   
   
   

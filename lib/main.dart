@@ -1,7 +1,12 @@
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttery/mmotkim.dart';
 
-void main() {
-  final game = FlameGame();
+void main() async {
+  await WidgetsFlutterBinding.ensureInitialized();
+  await Flame.device.fullScreen();
+  await Flame.device.setLandscape();
+  final game = Mmotkim();
   runApp(GameWidget(game: game));
 }
