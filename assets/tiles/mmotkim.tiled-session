@@ -4,16 +4,18 @@
         "width": 2
     },
     "activeFile": "GrassLands.tmx",
+    "automapping.whileDrawing": false,
     "expandedProjectPaths": [
         "."
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "GrassLands.tmx": {
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 284.33333333333337,
-                "y": 254.33333333333337
+                "x": 283.66666666666663,
+                "y": 253.66666666666669
             }
         },
         "grass.tsx": {
@@ -21,7 +23,7 @@
             "scaleInEditor": 1.5
         }
     },
-    "last.imagePath": "C:/Users/Admin/Downloads/Compressed/Pixel Art Top Down - Basic/Texture",
+    "last.imagePath": "C:/code/fluttery/assets/texture",
     "map.height": 90,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,

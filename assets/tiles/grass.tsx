@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.10.2" name="grass" tilewidth="16" tileheight="16" tilecount="256" columns="16">
- <image source="../../../../Users/Admin/Downloads/Compressed/Pixel Art Top Down - Basic/Texture/TX Tileset Grass.png" width="256" height="256"/>
+ <image source="texture/TX Tileset Grass.png" width="256" height="256"/>
 </tileset>

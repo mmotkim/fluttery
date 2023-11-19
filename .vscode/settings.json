@@ -5,5 +5,10 @@
     "superBG.images": [
         "/C:/Users/Admin/OneDrive/Pictures/Collected/F9BRpZ-aQAA9W7M.jpg"
     ],
-    "superBG.url": ""
+    "superBG.url": "",
+    "workbench.colorCustomizations": {
+        "[Mmotkim]": {},
+        "minimap.background": "#00000000",
+        "scrollbar.shadow": "#00000000"
+    }
 }

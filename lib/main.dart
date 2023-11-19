@@ -6,7 +6,7 @@ import 'package:fluttery/mmotkim.dart';
 void main() async {
   await WidgetsFlutterBinding.ensureInitialized();
   await Flame.device.fullScreen();
-  await Flame.device.setLandscape();
+  await Flame.device.setLandscape();  
   final game = Mmotkim();
   runApp(GameWidget(game: game));
 }
