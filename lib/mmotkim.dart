@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:fluttery/worlds/world.dart';
@@ -10,12 +11,16 @@ class Mmotkim extends FlameGame {
   final world = MapWorld(mapAsset: 'GrassLands.tmx');
 
   @override
-  FutureOr<void> onLoad() {
+  FutureOr<void> onLoad() async {
+    await images.loadAllImages(); //Change to specific images later on
     cam = CameraComponent.withFixedResolution(
-        world: world, width: 2560, height: 1440);
+      world: world,
+      width: 2560,
+      height: 1440,
+    );
     cam.viewfinder.anchor = Anchor.topLeft;
-    
-    addAll([cam, world]);
+    final cameraComponent = CameraComponent(world: world);
+    addAll([cameraComponent, world]);
 
     return super.onLoad();
   }
