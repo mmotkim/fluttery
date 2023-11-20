@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:fluttery/mmotkim.dart';
 
+enum PlayerState {idle, running}
 class Player extends SpriteAnimationGroupComponent with HasGameRef<Mmotkim> {
-  late final SpriteAnimation idleAnimation;
+  late final SpriteAnimation faceDown;
+  late final String character = 'Character_001.png';
 
   @override
   FutureOr<void> onLoad() {
@@ -14,15 +15,18 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<Mmotkim> {
   }
 
   void _loadAllAnimations() {
-    idleAnimation = SpriteAnimation.fromFrameData(
-      gameRef.images.fromCache('Character_001.png'),
-      SpriteAnimationData.range(
-        start: 0,
-        end: 3,
+    faceDown = SpriteAnimation.fromFrameData(
+      gameRef.images.fromCache(character),
+      SpriteAnimationData.sequenced(
+
         amount: 4,
-        stepTimes: [1],
-        textureSize: Vector2.all(48),
+        stepTime: 0.1,
+        textureSize: Vector2.all(72),
       ),
-    );
+    );    
+
+    animations = {PlayerState.idle: faceDown};
+
+    current = PlayerState.idle;
   }
 }

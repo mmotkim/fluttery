@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:fluttery/actors/player.dart';
 import 'package:fluttery/worlds/world.dart';
 
 class Mmotkim extends FlameGame {
@@ -18,9 +18,10 @@ class Mmotkim extends FlameGame {
       width: 2560,
       height: 1440,
     );
-    cam.viewfinder.anchor = Anchor.topLeft;
+    cam.viewfinder.anchor = Anchor.center;
     final cameraComponent = CameraComponent(world: world);
     addAll([cameraComponent, world]);
+    add(Player());
 
     return super.onLoad();
   }

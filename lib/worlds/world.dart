@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/services.dart';
 
 class MapWorld extends World {
   late TiledComponent level;
