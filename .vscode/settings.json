@@ -10,5 +10,14 @@
         "[Mmotkim]": {},
         "minimap.background": "#00000000",
         "scrollbar.shadow": "#00000000"
+    },
+    "dart.flutterSdkPath": ".fvm/flutter_sdk",
+    // Remove .fvm files from search
+    "search.exclude": {
+        "**/.fvm": true
+    },
+    // Remove from file watching
+    "files.watcherExclude": {
+        "**/.fvm": true
     }
 }
