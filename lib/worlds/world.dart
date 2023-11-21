@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:fluttery/actors/player.dart';
 
 class MapWorld extends World {
   late TiledComponent level;
@@ -21,7 +22,10 @@ class MapWorld extends World {
       prefix: "assets/tiles/",
       images: Images(prefix: 'assets/'),
     );
-    add(level);
+    final player = Player();
+    player.priority = 5;
+    await add(level);
+    await add(player);
   }
 
   @override
