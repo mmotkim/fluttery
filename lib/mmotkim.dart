@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
-import 'package:flame/experimental.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:fluttery/actors/player.dart';
 import 'package:fluttery/worlds/world.dart';
 
-class Mmotkim extends FlameGame {
+class Mmotkim extends FlameGame with HasKeyboardHandlerComponents {
   late final CameraComponent cam;
 
   final world = MapWorld(mapAsset: 'GrassLands.tmx');
@@ -17,7 +17,7 @@ class Mmotkim extends FlameGame {
     await images.loadAllImages(); //Change to specific images later on
 
     final cam = CameraComponent(world: world);
-    // cam.viewport = FixedResolutionViewport(resolution: Vector2(640, 300));
+    // cam.viewport = FixedResolutionViewport(resolution: Vector2(640, 300));       
     // final cam = CameraComponent.withFixedResolution(
     //     world: world, width: 640, height: 320);
 
