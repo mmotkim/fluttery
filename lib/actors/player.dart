@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame/sprite.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:fluttery/mmotkim.dart';
@@ -74,6 +75,10 @@ class Player extends SpriteAnimationGroupComponent
     moveLeft = _getMoveAnimation(start: 4, end: 7, amount: 8, stepTime: 0.2);
     moveRight = _getMoveAnimation(start: 8, end: 11, amount: 12, stepTime: 0.2);
     moveUp = _getMoveAnimation(start: 12, end: 15, amount: 16, stepTime: 0.2);
+
+    final spriteSheet = SpriteSheet(
+        image: gameRef.images.fromCache(character), srcSize: Vector2.all(72));
+    var down = spriteSheet.createAnimation(row: 0, stepTime: 0.2);
 
     animations = {PlayerState.down: moveDown};
 
