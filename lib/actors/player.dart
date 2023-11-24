@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame/text.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:fluttery/mmotkim.dart';
@@ -21,7 +22,7 @@ class Player extends SpriteAnimationGroupComponent
   late final String character = 'Character_001.png';
   int horizontalDirection = 0;
   int verticalDirection = 0;
-  final double moveSpeed = 100;
+  final double moveSpeed = 300;
   final Vector2 velocity = Vector2.zero();
 
   @override
@@ -32,12 +33,17 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   void update(double dt) {
-    velocity.x = horizontalDirection * moveSpeed;
-    velocity.y = verticalDirection * moveSpeed;
-    position += velocity * dt
-      ..normalize();
+    // velocity.x = horizontalDirection * moveSpeed;
+    // velocity.y = verticalDirection * moveSpeed;
+    // position += velocity * dt
+    // ..normalize();
     // position.x += horizontalDirection * moveSpeed * dt;
     // position.y += verticalDirection * moveSpeed * dt;
+    Vector2 v =
+        Vector2(horizontalDirection.toDouble(), verticalDirection.toDouble())
+            .normalized();
+    v.clampScalar(min, max)
+    position += v * moveSpeed * dt;
     super.update(dt);
   }
 
