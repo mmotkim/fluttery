@@ -1,9 +1,10 @@
+// ignore_for_file: unused_import
+
 import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/text.dart';
-import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:fluttery/mmotkim.dart';
 
@@ -24,6 +25,7 @@ class Player extends SpriteAnimationGroupComponent
   int verticalDirection = 0;
   final double moveSpeed = 300;
   final Vector2 velocity = Vector2.zero();
+  static const double acceleration = 0.2;
 
   @override
   FutureOr<void> onLoad() {
@@ -33,16 +35,13 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   void update(double dt) {
-    // velocity.x = horizontalDirection * moveSpeed;
-    // velocity.y = verticalDirection * moveSpeed;
-    // position += velocity * dt
-    // ..normalize();
-    // position.x += horizontalDirection * moveSpeed * dt;
-    // position.y += verticalDirection * moveSpeed * dt;
     Vector2 v =
-        Vector2(horizontalDirection.toDouble(), verticalDirection.toDouble())
-            .normalized();
-    v.clampScalar(min, max)
+        Vector2(horizontalDirection.toDouble(), verticalDirection.toDouble());
+    v.clampLength(-1, 1);
+    // double accFactor = acceleration;
+    // v.x.clamp(-accFactor, accFactor);
+    // v.y.clamp(-accFactor, accFactor);
+
     position += v * moveSpeed * dt;
     super.update(dt);
   }
@@ -51,6 +50,15 @@ class Player extends SpriteAnimationGroupComponent
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalDirection = 0;
     verticalDirection = 0;
+    bool keyLeft = (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
+        keysPressed.contains(LogicalKeyboardKey.keyA));
+    bool keyDown = (keysPressed.contains(LogicalKeyboardKey.arrowDown) ||
+        keysPressed.contains(LogicalKeyboardKey.keyS));
+    bool keyRight = (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
+        keysPressed.contains(LogicalKeyboardKey.keyD));
+    bool keyUp = (keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
+        keysPressed.contains(LogicalKeyboardKey.keyW));
+
     horizontalDirection +=
         (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
                 keysPressed.contains(LogicalKeyboardKey.keyA))
@@ -86,7 +94,12 @@ class Player extends SpriteAnimationGroupComponent
         image: gameRef.images.fromCache(character), srcSize: Vector2.all(72));
     var down = spriteSheet.createAnimation(row: 0, stepTime: 0.2);
 
-    animations = {PlayerState.down: moveDown};
+    animations = {
+      PlayerState.down: moveDown,
+      PlayerState.left: moveLeft,
+      PlayerState.right: moveRight,
+      PlayerState.up: moveUp,
+    };
 
     current = PlayerState.down;
   }

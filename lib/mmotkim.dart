@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:fluttery/actors/player.dart';
 import 'package:fluttery/worlds/world.dart';
 
 class Mmotkim extends FlameGame with HasKeyboardHandlerComponents {
@@ -21,7 +19,6 @@ class Mmotkim extends FlameGame with HasKeyboardHandlerComponents {
     // final cam = CameraComponent.withFixedResolution(
     //     world: world, width: 640, height: 320);
 
-    final player = Player();
 
     cam.viewfinder.anchor = Anchor.topLeft;
     addAll([world, cam]);
