@@ -26,6 +26,7 @@ class Player extends SpriteAnimationGroupComponent
   final double moveSpeed = 300;
   final Vector2 velocity = Vector2.zero();
   static const double acceleration = 0.2;
+  var state = PlayerState.down;
 
   @override
   FutureOr<void> onLoad() {
@@ -35,15 +36,17 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   void update(double dt) {
+    _updateMovement(dt);
+    _updateDisplay();
+    super.update(dt);
+  }
+
+  void _updateMovement(double dt) {
     Vector2 v =
         Vector2(horizontalDirection.toDouble(), verticalDirection.toDouble());
     v.clampLength(-1, 1);
-    // double accFactor = acceleration;
-    // v.x.clamp(-accFactor, accFactor);
-    // v.y.clamp(-accFactor, accFactor);
 
     position += v * moveSpeed * dt;
-    super.update(dt);
   }
 
   @override
@@ -59,27 +62,15 @@ class Player extends SpriteAnimationGroupComponent
     bool keyUp = (keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
         keysPressed.contains(LogicalKeyboardKey.keyW));
 
-    horizontalDirection +=
-        (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
-                keysPressed.contains(LogicalKeyboardKey.keyA))
-            ? -1
-            : 0;
+    if (keyLeft) state = PlayerState.left;
+    else if (keyRight) state = PlayerState.right;
+    else if (keyDown) state = PlayerState.down;
+    else if (keyUp) state = PlayerState.up;
 
-    horizontalDirection +=
-        (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
-                keysPressed.contains(LogicalKeyboardKey.keyD))
-            ? 1
-            : 0;
-
-    verticalDirection += (keysPressed.contains(LogicalKeyboardKey.arrowDown) ||
-            keysPressed.contains(LogicalKeyboardKey.keyS))
-        ? 1
-        : 0;
-
-    verticalDirection += (keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
-            keysPressed.contains(LogicalKeyboardKey.keyW))
-        ? -1
-        : 0;
+    horizontalDirection += keyLeft ? -1 : 0;
+    horizontalDirection += keyRight ? 1 : 0;
+    verticalDirection += keyDown ? 1 : 0;
+    verticalDirection += keyUp ? -1 : 0;
 
     return true;
   }
@@ -100,9 +91,12 @@ class Player extends SpriteAnimationGroupComponent
       PlayerState.right: moveRight,
       PlayerState.up: moveUp,
     };
-
-    current = PlayerState.down;
   }
+
+  void _updateDisplay() {
+    current = state;
+  }
+
 
   SpriteAnimation _getMoveAnimation({
     required int start,
