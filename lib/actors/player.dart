@@ -3,17 +3,40 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/text.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:fluttery/mmotkim.dart';
+import 'package:fluttery/worlds/world.dart';
 
-enum PlayerState { idle, left, right, up, down }
+import '../worlds/collision_block.dart';
+
+enum PlayerState {
+  idle,
+  moveLeft,
+  moveRight,
+  moveUp,
+  moveDown,
+  lookLeft,
+  lookRight,
+  lookUp,
+  lookDown
+}
 
 class Player extends SpriteAnimationGroupComponent
-    with HasGameRef<Mmotkim>, KeyboardHandler {
+    with HasGameRef<Mmotkim>, KeyboardHandler, CollisionCallbacks {
+  Player({
+    Vector2? position,
+    this.character = 'Character_001.png',
+  }) : super(
+          position: position,
+          priority: 3,
+        );
+
   late final SpriteAnimation faceDown;
   late final SpriteAnimation faceUp;
   late final SpriteAnimation faceLeft;
@@ -22,26 +45,25 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation moveUp;
   late final SpriteAnimation moveLeft;
   late final SpriteAnimation moveRight;
-  late final String character = 'Character_001.png';
-  late SpriteAnimationComponent currentAnimation;
+  late final SpriteSheet spriteSheet;
+  final String? character;
   int horizontalDirection = 0;
   int verticalDirection = 0;
   bool isMoving = false;
-  final double moveSpeed = 300;
+  final double moveSpeed = 168;
   final Vector2 velocity = Vector2.zero();
   static const double acceleration = 0.2;
-  var playerState = PlayerState.down;
+  var playerState = PlayerState.moveDown;
+  final stepTime = 0.15;
+  List<CollisionBlock> collisionBlocks = [];
+  late ShapeHitbox hitbox;
 
   @override
   FutureOr<void> onLoad() {
     _loadAllAnimations();
+    _loadHitbox();
+    debugMode = false;
     return super.onLoad();
-  }
-
-  @override
-  void render(Canvas canvas) {
-    currentAnimation.render(canvas);
-    super.render(canvas);
   }
 
   @override
@@ -63,6 +85,7 @@ class Player extends SpriteAnimationGroupComponent
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalDirection = 0;
     verticalDirection = 0;
+
     bool keyLeft = (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
         keysPressed.contains(LogicalKeyboardKey.keyA));
     bool keyDown = (keysPressed.contains(LogicalKeyboardKey.arrowDown) ||
@@ -75,13 +98,13 @@ class Player extends SpriteAnimationGroupComponent
     isMoving = true;
 
     if (keyLeft)
-      playerState = PlayerState.left;
+      playerState = PlayerState.moveLeft;
     else if (keyRight)
-      playerState = PlayerState.right;
+      playerState = PlayerState.moveRight;
     else if (keyDown)
-      playerState = PlayerState.down;
+      playerState = PlayerState.moveDown;
     else if (keyUp)
-      playerState = PlayerState.up;
+      playerState = PlayerState.moveUp;
     else
       isMoving = false;
 
@@ -94,81 +117,93 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _loadAllAnimations() {
-    moveDown = _getMoveAnimation(start: 0, end: 3, amount: 4, stepTime: 0.2);
-    moveLeft = _getMoveAnimation(start: 4, end: 7, amount: 8, stepTime: 0.2);
-    moveRight = _getMoveAnimation(start: 8, end: 11, amount: 12, stepTime: 0.2);
-    moveUp = _getMoveAnimation(start: 12, end: 15, amount: 16, stepTime: 0.2);
-    faceDown = _getMoveAnimation(
-        start: 0, end: 0, amount: 1, stepTime: 0.2, amountPerRow: 1);
+    spriteSheet = SpriteSheet(
+        image: gameRef.images.fromCache(character!), srcSize: Vector2.all(72));
+    moveDown = _getMoveAnimation(row: 0, from: 0, to: 4);
+    moveLeft = _getMoveAnimation(row: 1, from: 0, to: 4);
+    moveRight = _getMoveAnimation(row: 2, from: 0, to: 4);
+    moveUp = _getMoveAnimation(row: 3, from: 0, to: 4);
 
-    final spriteSheet = SpriteSheet(
-        image: gameRef.images.fromCache(character), srcSize: Vector2.all(72));
-    // faceDown = spriteSheet.createAnimation(row: 1, stepTime: 0.2);
-    // faceDown = spriteSheet.createAnimationWithVariableStepTimes(row: row, stepTimes: stepTimes)
-    currentAnimation = SpriteAnimationComponent();
+    faceDown = _getMoveAnimation(row: 0);
+    faceLeft = _getMoveAnimation(row: 1);
+    faceRight = _getMoveAnimation(row: 2);
+    faceUp = _getMoveAnimation(row: 3);
 
-    // animations = {
-    //   PlayerState.down: moveDown,
-    //   PlayerState.left: moveLeft,
-    //   PlayerState.right: moveRight,
-    //   PlayerState.up: moveUp,
-    // };
+    animations = {
+      PlayerState.moveDown: moveDown,
+      PlayerState.moveLeft: moveLeft,
+      PlayerState.moveRight: moveRight,
+      PlayerState.moveUp: moveUp,
+      PlayerState.lookDown: faceDown,
+      PlayerState.lookLeft: faceLeft,
+      PlayerState.lookRight: faceRight,
+      PlayerState.lookUp: faceUp,
+    };
   }
 
   void _updateDisplay() {
-    // if (playerState == PlayerState.idle) {
-    //   current = faceDown;
-    // }
-    // current = playerState;
     switch (playerState) {
-      case PlayerState.down:
+      case PlayerState.moveDown:
         if (isMoving) {
-          currentAnimation.animation = moveDown;
-          print('moveDown');
+          playerState = PlayerState.moveDown;
         } else {
-          currentAnimation.animation = faceDown;
-          print('faceDOwn');
+          playerState = PlayerState.lookDown;
         }
-
         break;
-      case PlayerState.left:
-        currentAnimation.animation = moveLeft;
+      case PlayerState.moveLeft:
+        if (isMoving) {
+          playerState = PlayerState.moveLeft;
+        } else {
+          playerState = PlayerState.lookLeft;
+        }
         break;
-      case PlayerState.right:
-        currentAnimation.animation = moveRight;
+      case PlayerState.moveRight:
+        if (isMoving) {
+          playerState = PlayerState.moveRight;
+        } else {
+          playerState = PlayerState.lookRight;
+        }
         break;
-      case PlayerState.up:
-        currentAnimation.animation = moveUp;
+      case PlayerState.moveUp:
+        if (isMoving) {
+          playerState = PlayerState.moveUp;
+        } else {
+          playerState = PlayerState.lookUp;
+        }
         break;
-      case PlayerState.idle:
-        // TODO: Handle this case.
-        break;
+      default:
     }
 
-    current = currentAnimation.animation;
+    current = playerState;
   }
 
   SpriteAnimation _getMoveAnimation({
-    required int start,
-    required int end,
-    required int amount,
-    required double stepTime,
-    int? amountPerRow,
+    required int row,
+    int? from,
+    int? to,
   }) {
-    final List<double> stepTimes = [];
-    for (int i = 0; i < amount; i++) {
-      stepTimes.add(stepTime);
-    }
-    return SpriteAnimation.fromFrameData(
-      gameRef.images.fromCache(character),
-      SpriteAnimationData.range(
-        amountPerRow: amountPerRow ?? 4,
-        start: start,
-        end: end,
-        amount: amount,
-        stepTimes: stepTimes,
-        textureSize: Vector2.all(72),
-      ),
+    return spriteSheet.createAnimation(
+      row: row,
+      stepTime: stepTime,
+      from: from ?? 0,
+      to: to ?? 1,
     );
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    print('player COLLIDED');
+    velocity.negate();
+  }
+
+  void _loadHitbox() {
+    final defaultPaint = Paint()
+      ..color = Colors.orangeAccent
+      ..style = PaintingStyle.stroke;
+    hitbox = RectangleHitbox()
+      ..paint = defaultPaint
+      ..debugMode = true;
+    add(hitbox);
   }
 }
