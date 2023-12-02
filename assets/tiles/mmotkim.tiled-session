@@ -11,16 +11,20 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "GrassLands.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 0,
+            "scale": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 283.66666666666663,
-                "y": 253.66666666666669
+                "x": 395.5,
+                "y": 345.5
             }
         },
         "grass.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1.5
+        },
+        "plant.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         }
     },
     "last.imagePath": "C:/code/fluttery/assets/images",
@@ -31,11 +35,13 @@
     "map.width": 160,
     "openFiles": [
         "grass.tsx",
-        "GrassLands.tmx"
+        "GrassLands.tmx",
+        "plant.tsx"
     ],
     "project": "mmotkim.tiled-project",
     "recentFiles": [
         "grass.tsx",
+        "plant.tsx",
         "GrassLands.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
