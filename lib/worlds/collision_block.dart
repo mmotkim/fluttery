@@ -49,8 +49,6 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks {
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     hitbox.paint.color = _collisionStartColor;
     _collision = true;
-    print('Object COLLIDED');
-    // TODO: implement onCollision
     super.onCollision(intersectionPoints, other);
   }
 }

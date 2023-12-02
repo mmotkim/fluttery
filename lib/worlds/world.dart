@@ -3,19 +3,23 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttery/actors/player.dart';
 
 import 'collision_block.dart';
 
-class MapWorld extends World {
+class MapWorld extends World with HasGameReference {
   late TiledComponent level;
   final String mapAsset;
   static const String spawnPoint = 'SpawnPoints';
   static final String collisions = 'Collisions';
   late Player player;
+  // late CameraComponent cam;
   List<CollisionBlock> collisionBlocks = [];
+  static const double size = 1500;
+  static final Rectangle bounds = Rectangle.fromLTRB(-size, -size, size, size);
 
   MapWorld({
     super.children,
@@ -27,15 +31,16 @@ class MapWorld extends World {
     level = await TiledComponent.load(
       mapAsset,
       Vector2.all(16),
-
-      // prefix: "assets/tiles/",
-      // images: Images(prefix: 'assets/'),
     );
+    // print(parent?.children.elementAt(0));
     loadSpawn();
     addCollisions();
     await add(player);
     await add(level);
-    // await add(player);
+    game.camera.viewport.anchor = Anchor.center;
+    // game.camera.setBounds(bounds);
+    // game.camera.follow(player, maxSpeed: 150);
+    // game.camera.viewfinder.visibleGameSize = level.size / 6;
   }
 
   @override

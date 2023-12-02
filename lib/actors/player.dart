@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/text.dart';
 import 'package:flutter/material.dart';
@@ -51,18 +52,21 @@ class Player extends SpriteAnimationGroupComponent
   int verticalDirection = 0;
   bool isMoving = false;
   final double moveSpeed = 168;
-  final Vector2 velocity = Vector2.zero();
+  Vector2 velocity = Vector2.zero();
   static const double acceleration = 0.2;
   var playerState = PlayerState.moveDown;
   final stepTime = 0.15;
   List<CollisionBlock> collisionBlocks = [];
   late ShapeHitbox hitbox;
+  Vector2 vec2 = Vector2.zero();
+  Vector2 blockedDirection = Vector2.zero();
 
   @override
   FutureOr<void> onLoad() {
     _loadAllAnimations();
     _loadHitbox();
-    debugMode = false;
+
+    debugMode = true;
     return super.onLoad();
   }
 
@@ -70,15 +74,18 @@ class Player extends SpriteAnimationGroupComponent
   void update(double dt) {
     _updateMovement(dt);
     _updateDisplay();
+    print(vec2);
     super.update(dt);
   }
 
   void _updateMovement(double dt) {
-    Vector2 v =
+    velocity =
         Vector2(horizontalDirection.toDouble(), verticalDirection.toDouble());
-    v.clampLength(-1, 1);
+    velocity.clampLength(-1, 1);
+    vec2 = velocity * moveSpeed;
+    // position.add(vec2);
 
-    position += v * moveSpeed * dt;
+    position += vec2 * dt;
   }
 
   @override
@@ -191,10 +198,29 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollision(intersectionPoints, other);
-    print('player COLLIDED');
-    velocity.negate();
+  void onCollision(Set<Vector2> intrs, PositionComponent other) {
+    super.onCollision(intrs, other);
+    if (other is CollisionBlock) {
+      if (velocity.x > 0) {
+        position.x = other.x - width;
+      }
+
+      if (velocity.x < 0) {
+        position.x = other.x + other.width;
+      }
+      if (velocity.y > 0) {
+        position.y = other.y - height;
+      }
+      // if (velocity.y < 0) {
+      //   position.y = other.y + other.height;
+      // }
+    }
+  }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
   }
 
   void _loadHitbox() {
@@ -205,5 +231,24 @@ class Player extends SpriteAnimationGroupComponent
       ..paint = defaultPaint
       ..debugMode = true;
     add(hitbox);
+  }
+
+  bool _isCollision(Player player, PositionComponent other) {
+    final fixedX = velocity.x < 0 ? player.x - player.width : player.x;
+    return
+        //player top collide with bottom of block
+        player.y < other.y + other.height &&
+            // bottom of player  player touches grass
+            player.y + player.height > other.y &&
+            // collide with the right of block
+            fixedX < other.x + other.height &&
+            // right of player collide with left of block
+            fixedX + player.width > other.x;
+  }
+
+  bool _checkVerticalCollision(Player player, PositionComponent other) {
+    final fixedY =
+        velocity.y < 0 ? player.hitbox.y - player.hitbox.height : player.x;
+    return false;
   }
 }
