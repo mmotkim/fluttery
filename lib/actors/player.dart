@@ -74,7 +74,8 @@ class Player extends SpriteAnimationGroupComponent
   void update(double dt) {
     _updateMovement(dt);
     _updateDisplay();
-    print(vec2);
+    // print(vec2);
+
     super.update(dt);
   }
 
@@ -198,23 +199,51 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   @override
-  void onCollision(Set<Vector2> intrs, PositionComponent other) {
-    super.onCollision(intrs, other);
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    print(intersectionPoints);
+    // while (isMoving) {
+
     if (other is CollisionBlock) {
-      if (velocity.x > 0) {
-        position.x = other.x - width;
+      Vector2 penetration = Vector2(
+        (x < other.x) ? (x + width - other.x) : (other.x + other.width - x),
+        (y < other.y) ? (y + height - other.y) : (other.y + other.height - y),
+      )..absolute();
+
+      if (penetration.x < penetration.y) {
+        x += (x < other.x) ? -penetration.x : penetration.x;
+      } else if (penetration.y < penetration.x) {
+        y += (y < other.y) ? -penetration.y : penetration.y;
       }
 
-      if (velocity.x < 0) {
-        position.x = other.x + other.width;
-      }
-      if (velocity.y > 0) {
-        position.y = other.y - height;
-      }
-      // if (velocity.y < 0) {
-      //   position.y = other.y + other.height;
+      // double penetration_x = 0;
+      // double penetration_y = 0;
+
+      // if (x < other.x)
+      //   penetration_x = x + width - other.x;
+      // else
+      //   penetration_x = other.x + other.width - x;
+
+      // if (y < other.y)
+      //   penetration_y = y + height - other.y;
+      // else
+      //   penetration_y = other.y + other.height - y;
+
+      // if (penetration_x.abs() < penetration_y.abs()) {
+      //   if (x < other.x)
+      //     x -= penetration_x;
+      //   else
+      //     x += penetration_x;
+      // }
+
+      // if (penetration_y.abs() < penetration_x.abs()) {
+      //   if (y < other.y)
+      //     y -= penetration_y;
+      //   else
+      //     y += penetration_y;
       // }
     }
+    // }
   }
 
   @override
